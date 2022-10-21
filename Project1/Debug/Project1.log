@@ -1,0 +1,24 @@
+﻿  Camera.cpp
+C:\Users\Timothy\Downloads\A2\Camera.h(8,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Timothy\Downloads\A2\Camera.cpp(150,17): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(150,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(151,17): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(151,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(152,17): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(152,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(172,3): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(172,3): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(173,6): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(173,6): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(220,16): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(220,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(221,16): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(221,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(222,16): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(222,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(242,3): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(242,3): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(243,6): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\Timothy\Downloads\A2\Camera.cpp(243,6): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\Camera.cpp(302,40): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Project1.vcxproj -> C:\Users\Timothy\source\repos\a2\Debug\Project1.exe

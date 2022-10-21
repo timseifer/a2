@@ -1,0 +1,43 @@
+﻿  Camera.cpp
+C:\Users\Timothy\Downloads\A2\Camera.h(8,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+  main.cpp
+C:\Users\Timothy\Downloads\A2\Camera.h(8,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Timothy\Downloads\A2\main.cpp(108,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(115,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(174,108): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(174,82): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(174,56): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(183,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(184,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(185,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(190,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(191,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(192,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(197,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(198,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\main.cpp(199,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  MyGLCanvas.cpp
+C:\Users\Timothy\Downloads\A2\Camera.h(8,28): warning C4305: 'initializing': truncation from 'double' to 'float'
+  SceneParser.cpp
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(190,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(195,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(200,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(234,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(239,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(244,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(250,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(260,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(275,39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(279,39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(780,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(785,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(790,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Timothy\Downloads\A2\scene\SceneParser.cpp(794,38): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  tinystr.cpp
+  tinyxml.cpp
+C:\Users\Timothy\Downloads\A2\scene\tinyxml.cpp(945,18): error C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Timothy\Downloads\A2\scene\tinyxml.cpp(1080,16): error C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Timothy\Downloads\A2\scene\tinyxml.cpp(1227,10): error C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Timothy\Downloads\A2\scene\tinyxml.cpp(1234,10): error C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  tinyxmlerror.cpp
+  tinyxmlparser.cpp
