@@ -22,14 +22,14 @@ public:
 	glm::vec3 v;
 	glm::vec3 w;
 	glm::vec3 eye;
-	glm::mat4 scale;
-	glm::mat4 rotate;
-	glm::mat4 rotate_inverse;
-	glm::mat4 translate;
-	glm::mat4 translate_inverse;
-	glm::mat4 m_pp;
-	glm::mat4 model_view_matrix;
-	glm::mat4 projection_matrix;
+	glm::mat4x4 scale;
+	glm::mat4x4 rotate;
+	glm::mat4x4 rotate_inverse;
+	glm::mat4x4 translate;
+	glm::mat4x4 translate_inverse;
+	glm::mat4x4 m_pp;
+	glm::mat4x4 model_view_matrix;
+	glm::mat4x4 projection_matrix;
 	glm::vec3 lookVec;
 	glm::vec3 upVec;
 
@@ -40,6 +40,7 @@ public:
 
 	glm::vec3 cross_product_n(glm::vec3 first, glm::vec3 second);
 	glm::vec3 cross_product(glm::vec3 first, glm::vec3 second);
+	glm::mat4 multiply_matrix(glm::mat4 m1, glm::mat4 m2);
 
 	void reset();
 	void orientLookAt(glm::vec3 eyePoint, glm::vec3 focusPoint, glm::vec3 upVec);
