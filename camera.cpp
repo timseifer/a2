@@ -91,80 +91,84 @@ void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 u
 }
 
 
-
 void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVec) {
 	this->eye = eyePoint;
 	//wuv maps to fsu
-	this->w = -normalize(eyePoint);
+	this->w = -normalize(lookVec - eyePoint);
 	this->u = normalize(cross(upVec, w));
 	this->v = cross(this->w, this->u);
 	this->lookVec = lookVec;
 	this->upVec = upVec;
-	float r_i[16] = {
-		this->u[0], this->u[1], this->u[2], 0,
-		this->v[0], this->v[1], this->v[2], 0,
-		this->w[0], this->w[1], this->w[2], 0,
-		0, 0, 0, 1
+	
+	this->rotate_inverse = {
+		this->u[0], this->v[0], this->w[0], 0.0f,
+		this->u[1], this->v[1], this->w[1], 0.0f,
+		this->u[2], this->v[2], this->w[2], 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	float r[16] = {
-	this->u[0], this->v[0], this->w[0], 0,
-	this->u[1], this->v[1], this->w[1], 0,
-	this->u[2], this->v[2], this->w[2], 0,
-	0, 0, 0, 1
+	this->translate_inverse = {
+		1.0f, 0, 0, 0,
+		0, 1.0f, 0, 0,
+		0, 0, 1.0f, 0,
+		-this->eye[0], -this->eye[1], -this->eye[2], 1.0f
 	};
-	this->rotate_inverse = glm::make_mat4(r_i);
-	this->rotate = glm::make_mat4(r);
-
-	float t_i[16] = {
-		1, 0, 0, -1.0f * this->eye.x,
-		0, 1, 0, -1.0f * this->eye.y,
-		0, 0, 1, -1.0f * this->eye.z,
-		0, 0, 0, 1
-	};
-
-	float t[16] = {
-	1, 0, 0, this->eye.x,
-	0, 1, 0, this->eye.y,
-	0, 0, 1, this->eye.z,
-	0, 0, 0, 1
-	};
-	this->translate_inverse = glm::make_mat4(t_i);
-	this->translate = glm::make_mat4(t);
 
 	float theta_w = glm::radians(this->viewAngle);
-	float h2 = tan(theta_w / 2.0f) * farPlane * this->getScreenHeight() / this->getScreenWidth();
+	float h2 = tan(theta_w / 2.0f) * farPlane * (1.0f + this->getScreenHeight()) / (1.0f+this->getScreenWidth());
 	float theta_h = atan(h2 / this->farPlane) * 2.0f;
-	// theta_h needs checking
-	float s[16] = {
-		1.0f / (tan(theta_w / 2.0f) * this->farPlane), 0, 0, 0,
-		0, 1.0f / (tan(theta_h / 2.0f) * this->farPlane), 0, 0,
+	float w = 1.0f / (tan(theta_w / 2.0f) * this->farPlane);
+	float h = 1.0f / (tan(theta_h / 2.0f) * this->farPlane);
+	this->scale = {
+		w, 0, 0, 0,
+		0, h, 0, 0,
 		0, 0, 1.0f / this->farPlane, 0,
-		0, 0, 0, 1,
+		0, 0, 0, 1.0f
 	};
 
-	this->scale = glm::make_mat4(s);
 
-
-	float c = -(this->nearPlane / this->farPlane);
-	float mpp[16] = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, -1.0f / (c + 1.0f), c / (c + 1.0f),
-		0, 0, -1, 0
+	float c = -this->nearPlane / this->farPlane;
+	this->m_pp = {
+		1.0f, 0, 0, 0,
+		0, 1.0f, 0, 0,
+		0, 0, -1.0f / (c + 1.0f), -1.0f,
+		0, 0,  c / (c + 1.0f), 0
 	};
-	this->m_pp = glm::make_mat4(mpp);
-	this->model_view_matrix = this->translate_inverse * this->rotate_inverse;
-	glm::mat4 correct_matrix_model = glm::lookAt(this->eye, this->lookVec, this->upVec);
+	this->model_view_matrix = multiply_matrix(this->translate_inverse, this->rotate_inverse);
+	//glm::mat4 correct_matrix_model = glm::lookAt(this->eye, this->lookVec, this->upVec);
 	//this->model_view_matrix = correct_matrix_model;
-	this->projection_matrix = this->scale * this->m_pp;
-	glm::mat4 correct_projection_model = glm::perspective(glm::radians(this->viewAngle), this->getScreenWidthRatio(), this->nearPlane, this->farPlane);
-	this->projection_matrix = correct_projection_model;
-	//this->projection_matrix = correct_projection_model;
+	this->projection_matrix = multiply_matrix(this->scale, this->m_pp);
+	//glm::mat4 correct_projection_model = glm::perspective(glm::radians(this->viewAngle), this->getScreenWidthRatio(), this->nearPlane, this->farPlane);
 	float end = 0;
 
 
 }
+
+glm::mat4 Camera::multiply_matrix(glm::mat4 m1, glm::mat4 m2) {
+	return glm::mat4(
+		m1[0][0] * m2[0][0] + m1[0][1] * m2[1][0] + m1[0][2] * m2[2][0] + m1[0][ 3] * m2[3][ 0],
+		m1[0][ 0] * m2[0][ 1] + m1[0][ 1] * m2[1][ 1] + m1[0][ 2] * m2[2][ 1] + m1[0][ 3] * m2[3][ 1],
+		m1[0][ 0] * m2[0][ 2] + m1[0][ 1] * m2[1][ 2] + m1[0][ 2] * m2[2][ 2] + m1[0][ 3] * m2[3][ 2],
+		m1[0][ 0] * m2[0][ 3] + m1[0][ 1] * m2[1][ 3] + m1[0][ 2] * m2[2][ 3] + m1[0][ 3] * m2[3][ 3],
+
+		m1[1][ 0] * m2[0][ 0] + m1[1][ 1] * m2[1][ 0] + m1[1][ 2] * m2[2][ 0] + m1[1][ 3] * m2[3][ 0],
+		m1[1][ 0] * m2[0][ 1] + m1[1][ 1] * m2[1][ 1] + m1[1][ 2] * m2[2][ 1] + m1[1][ 3] * m2[3][ 1],
+		m1[1][ 0] * m2[0][ 2] + m1[1][ 1] * m2[1][ 2] + m1[1][ 2] * m2[2][ 2] + m1[1][ 3] * m2[3][ 2],
+		m1[1][ 0] * m2[0][ 3] + m1[1][ 1] * m2[1][ 3] + m1[1][ 2] * m2[2][ 3] + m1[1][ 3] * m2[3][ 3],
+
+		m1[2][ 0] * m2[0][ 0] + m1[2][ 1] * m2[1][ 0] + m1[2][ 2] * m2[2][ 0] + m1[2][ 3] * m2[3][ 0],
+		m1[2][ 0] * m2[0][ 1] + m1[2][ 1] * m2[1][ 1] + m1[2][ 2] * m2[2][ 1] + m1[2][ 3] * m2[3][ 1],
+		m1[2][ 0] * m2[0][ 2] + m1[2][ 1] * m2[1][ 2] + m1[2][ 2] * m2[2][ 2] + m1[2][ 3] * m2[3][ 2],
+		m1[2][ 0] * m2[0][ 3] + m1[2][ 1] * m2[1][ 3] + m1[2][ 2] * m2[2][ 3] + m1[2][ 3] * m2[3][ 3],
+
+		m1[3][ 0] * m2[0][ 0] + m1[3][ 1] * m2[1][ 0] + m1[3][ 2] * m2[2][ 0] + m1[3][ 3] * m2[3][ 0],
+		m1[3][ 0] * m2[0][ 1] + m1[3][ 1] * m2[1][ 1] + m1[3][ 2] * m2[2][ 1] + m1[3][ 3] * m2[3][ 1],
+		m1[3][ 0] * m2[0][ 2] + m1[3][ 1] * m2[1][ 2] + m1[3][ 2] * m2[2][ 2] + m1[3][ 3] * m2[3][ 2],
+		m1[3][ 0] * m2[0][ 3] + m1[3][ 1] * m2[1][ 3] + m1[3][ 2] * m2[2][ 3] + m1[3][ 3] * m2[3][ 3]
+	);
+}
+
+
 
 glm::mat4 Camera::getScaleMatrix() {
 	return this->scale;
@@ -184,7 +188,7 @@ glm::mat4 Camera::getProjectionMatrix() {
 }
 
 glm::mat4 Camera::getInverseModelViewMatrix() {
-	return this->translate * this->rotate;
+	return this->rotate * this->translate;
 }
 
 
@@ -238,7 +242,7 @@ glm::vec3 Camera::getEyePoint() {
 }
 
 glm::vec3 Camera::getLookVector() {
-	return this->lookVec;
+	return -this->w;
 }
 
 glm::vec3 Camera::getUpVector() {
