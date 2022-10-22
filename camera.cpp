@@ -58,14 +58,6 @@ glm::vec3 Camera::cross_product(glm::vec3 first, glm::vec3 second) {
 	return glm::vec3(cx, cy, cz);
 }
 
-glm::vec3 Camera::normalize(const glm::vec3& v)
-{
-	float length_of_v = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
-	if (length_of_v == 0) {
-		return v;
-	}
-	return glm::vec3(v.x / length_of_v, v.y / length_of_v, v.z / length_of_v);
-}
 
 void Camera::reset() {
 	setViewAngle(VIEW_ANGLE);
@@ -75,6 +67,7 @@ void Camera::reset() {
 	screenWidthRatio = 1.0f;
 	rotU = rotV = rotW = 0;
 	orientLookAt(glm::vec3(0.0f, 0.0f, DEFAULT_FOCUS_LENGTH), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
 
 }
 
@@ -92,114 +85,21 @@ void Camera::setRotUVW(float u, float v, float w) {
 	rotW = w;
 }
 
-glm::mat4 Camera::ProjectionMatrix() {
-	double near = this->nearPlane;
-	double far = this->farPlane;
-	double c = -near / far;
-	double theta_h = glm::radians(this->viewAngle);
-	double theta_w = theta_h * this->getScreenWidthRatio();
-	double h = 1.0 / (tan(theta_h / 2.0) * far);
-	double w = 1.0 / (tan(theta_w / 2.0) * far);
-
-	glm::mat4 m1 = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1.0 / (c + 1.0), c / (c + 1.0), 0, 0, -1, 0);
-	glm::mat4 m2 = glm::mat4(w, 0, 0, 0, 0, h, 0, 0, 0, 0, 1.0 / far, 0, 0, 0, 0, 1);
-
-	return m1 * m2;
-
-}
-
-glm::mat4 Camera::ModelViewMatrix() {
-	glm::vec3 up = this->getUpVector();
-	glm::vec3 look = this->getLookVector();
-	glm::vec3 w = -1.0f * look / length(look);//sqrt( pow(look[0], 2) + pow(look[1], 2) + pow(look[2], 2) );
-	glm::vec3 u = cross(up, w) / length(cross(up, w));
-	glm::vec3 v = cross(w, u);
-	glm::vec3 e1 = this->eye;
-	glm::vec3 e = glm::vec3(e1[0], e1[1], e1[2]);
-	glm::mat4 m1 = glm::mat4(u[0], u[1], u[2], 0, v[0], v[1], v[2], 0, w[0], w[1], w[2], 0, 0, 0, 0, 1);
-	glm::mat4 m2 =glm::mat4(1, 0, 0, -1.0 * e[0], 0, 1, 0, -1.0 * e[1], 0, 0, 1, -1.0 * e[2], 0, 0, 0, 1);
-	return m1 * m2;
-
-}
-
 
 void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 upVec) {
-	this->eye = eyePoint;
-	this->w = -normalize(lookatPoint);
-	this->u = cross_product_n(upVec, this->w);
-	this->v = cross_product(this->w, this->u);
-	this->lookVec = lookatPoint;
-	this->upVec = upVec;
-	float r_i[16] = {
-		this->u[0], this->u[1], this->u[2], 0,
-		this->v[0], this->v[1], this->v[2], 0,
-		this->w[0], this->w[1], this->w[2], 0,
-		0, 0, 0, 1
-	};
-
-	float r[16] = {
-	this->u[0], this->v[0], this->w[0], 0,
-	this->u[1], this->v[1], this->w[1], 0,
-	this->u[2], this->v[2], this->w[2], 0,
-	0, 0, 0, 1
-	};
-	this->rotate_inverse = glm::make_mat4(r_i);
-	this->rotate = glm::make_mat4(r);
-
-	float t_i[16] = {
-		1, 0, 0, -1.0 * this->eye[0],
-		0, 1, 0, -1.0 * this->eye[1],
-		0, 0, 1, -1.0 * this->eye[2],
-		0, 0, 0, 1
-	};
-
-	float t[16] = {
-	1, 0, 0, this->eye[0],
-	0, 1, 0, this->eye[1],
-	0, 0, 1, this->eye[2],
-	0, 0, 0, 1
-	};
-	this->translate_inverse = glm::make_mat4(t_i);
-	this->translate = glm::make_mat4(t);
-
-	double theta_h = glm::radians(this->viewAngle);
-	double theta_w = theta_h * this->screenWidthRatio;
-	double h = 1.0 / (tan(theta_h / 2.0) * this->farPlane);
-	double w = 1.0 / (tan(theta_w / 2.0) * this->farPlane);
-	//float theta_h = atan(h2 / this->farPlane);
-	// theta_h needs checking
-	float s[16] = {
-		w, 0, 0, 0,
-		0, h, 0, 0,
-		0, 0, 1 / this->farPlane, 0,
-		0, 0, 0, 1,
-	};
-
-	this->scale = glm::make_mat4(s);
-
-
-	float c = -this->nearPlane / this->farPlane;
-	float mpp[16] = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, -1 / (c + 1), c / (c + 1),
-		0, 0, -1, 0
-	};
-	this->m_pp = glm::make_mat4(mpp);
-	this->model_view_matrix = this->rotate * this->translate;
-	this->projection_matrix = this->scale * this->m_pp;
+	orientLookVec(eyePoint, lookatPoint, upVec);
 }
 
 
 
 void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVec) {
 	this->eye = eyePoint;
-	this->w = -normalize(lookVec);
-	this->u = cross_product_n(upVec, this->w);
-	this->v = cross_product(this->w, this->u);
+	//wuv maps to fsu
+	this->w = -normalize(eyePoint);
+	this->u = normalize(cross(upVec, w));
+	this->v = cross(this->w, this->u);
 	this->lookVec = lookVec;
 	this->upVec = upVec;
-	
 	float r_i[16] = {
 		this->u[0], this->u[1], this->u[2], 0,
 		this->v[0], this->v[1], this->v[2], 0,
@@ -217,47 +117,51 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 	this->rotate = glm::make_mat4(r);
 
 	float t_i[16] = {
-		1, 0, 0, -1.0*this->eye[0],
-		0, 1, 0, -1.0*this->eye[1],
-		0, 0, 1, -1.0*this->eye[2],
+		1, 0, 0, -1.0f * this->eye.x,
+		0, 1, 0, -1.0f * this->eye.y,
+		0, 0, 1, -1.0f * this->eye.z,
 		0, 0, 0, 1
 	};
 
 	float t[16] = {
-	1, 0, 0, this->eye[0],
-	0, 1, 0, this->eye[1],
-	0, 0, 1, this->eye[2],
+	1, 0, 0, this->eye.x,
+	0, 1, 0, this->eye.y,
+	0, 0, 1, this->eye.z,
 	0, 0, 0, 1
 	};
 	this->translate_inverse = glm::make_mat4(t_i);
 	this->translate = glm::make_mat4(t);
 
-	double theta_h = glm::radians(this->viewAngle);
-	double theta_w = theta_h * this->getScreenWidthRatio();
-	double h = 1.0 / (tan(theta_h / 2.0) * this->farPlane);
-	double w = 1.0 / (tan(theta_w / 2.0) * this->farPlane);
-	//float theta_h = atan(h2 / this->farPlane);
+	float theta_w = glm::radians(this->viewAngle);
+	float h2 = tan(theta_w / 2.0f) * farPlane * this->getScreenHeight() / this->getScreenWidth();
+	float theta_h = atan(h2 / this->farPlane) * 2.0f;
 	// theta_h needs checking
 	float s[16] = {
-		w, 0, 0, 0,
-		0, h, 0, 0,
-		0, 0, 1 / this->farPlane, 0,
+		1.0f / (tan(theta_w / 2.0f) * this->farPlane), 0, 0, 0,
+		0, 1.0f / (tan(theta_h / 2.0f) * this->farPlane), 0, 0,
+		0, 0, 1.0f / this->farPlane, 0,
 		0, 0, 0, 1,
 	};
 
 	this->scale = glm::make_mat4(s);
 
 
-	float c = -this->nearPlane / this->farPlane;
+	float c = -(this->nearPlane / this->farPlane);
 	float mpp[16] = {
 		1, 0, 0, 0,
 		0, 1, 0, 0,
-		0, 0, -1 / (c + 1), c / (c + 1),
+		0, 0, -1.0f / (c + 1.0f), c / (c + 1.0f),
 		0, 0, -1, 0
 	};
 	this->m_pp = glm::make_mat4(mpp);
-	this->model_view_matrix = this->rotate * this->translate;
+	this->model_view_matrix = this->translate_inverse * this->rotate_inverse;
+	glm::mat4 correct_matrix_model = glm::lookAt(this->eye, this->lookVec, this->upVec);
+	//this->model_view_matrix = correct_matrix_model;
 	this->projection_matrix = this->scale * this->m_pp;
+	glm::mat4 correct_projection_model = glm::perspective(glm::radians(this->viewAngle), this->getScreenWidthRatio(), this->nearPlane, this->farPlane);
+	this->projection_matrix = correct_projection_model;
+	//this->projection_matrix = correct_projection_model;
+	float end = 0;
 
 
 }
@@ -276,11 +180,11 @@ glm::mat4 Camera::getUnhingeMatrix() {
 
 
 glm::mat4 Camera::getProjectionMatrix() {
-	return ProjectionMatrix();
+	return this->projection_matrix;
 }
 
 glm::mat4 Camera::getInverseModelViewMatrix() {
-	return glm::inverse(this->rotate) * glm::inverse(this->translate);
+	return this->translate * this->rotate;
 }
 
 
@@ -303,7 +207,7 @@ void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 }
 
 glm::mat4 Camera::getModelViewMatrix() {
-	return ModelViewMatrix();
+	return this->model_view_matrix;
 }
 
 
@@ -362,5 +266,5 @@ int Camera::getScreenHeight() {
 }
 
 float Camera::getScreenWidthRatio() {
-	return screenWidthRatio;
+	return this->screenWidth/this->screenHeight;
 }
