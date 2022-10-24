@@ -224,8 +224,8 @@ void MyGLCanvas::drawScene() {
 
 	SceneNode* root = parser->getRootNode();
 	list<ScenePrimitive*> primitives;
-	list<SceneTransformation*> scenetransformations;
-	map<ScenePrimitive*, vector<SceneTransformation*>> my_scene_vals;
+	vector<SceneTransformation*> scenetransformations;
+	vector<pair<ScenePrimitive*, vector<SceneTransformation*>>> my_scene_vals;
 	traverse1(root, primitives, scenetransformations, my_scene_vals);
 
 
@@ -255,24 +255,33 @@ void MyGLCanvas::drawScene() {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glPushMatrix();
-		map<ScenePrimitive*, vector<SceneTransformation*>>::iterator itr;
-		int counter = 0;
-		for (itr = my_scene_vals.begin(); itr != my_scene_vals.end(); ++itr) {
-			ScenePrimitive* my_prim  = itr->first;
-			vector<SceneTransformation*> transformations = itr->second;
-			for (SceneTransformation* transform : transformations) {
-				glTranslatef(transform->translate[0], transform->translate[1], transform->translate[2]);
-				glScalef(transform->scale[0], transform->scale[1], transform->scale[2]);
-				glRotatef(transform->angle,transform->rotate[0], transform->rotate[1], transform->rotate[2]);
-				glLoadMatrixf(glm::value_ptr(transform->matrix));
+
+		for (pair<ScenePrimitive*, vector<SceneTransformation*>> my_p : my_scene_vals) {
+			ScenePrimitive* my_prim  = my_p.first;
+			glPushMatrix();
+			// TRANSFORMATION_TRANSLATE, TRANSFORMATION_SCALE,
+			// 	TRANSFORMATION_ROTATE, TRANSFORMATION_MATRIX
+			for (SceneTransformation* transform : my_p.second) {
+
+				if (transform->type == TRANSFORMATION_TRANSLATE) {
+					glTranslatef(transform->translate[0], transform->translate[1], transform->translate[2]);
+				}
+				else if (transform->type == TRANSFORMATION_SCALE) {
+					glScalef(transform->scale[0], transform->scale[1], transform->scale[2]);
+				}
+				else if (transform->type == TRANSFORMATION_ROTATE) {
+					glRotatef(glm::degrees(transform->angle),transform->rotate[0], transform->rotate[1], transform->rotate[2]);
+				}
+				else if (transform->type == TRANSFORMATION_MATRIX) {
+					glLoadMatrixf(glm::value_ptr(transform->matrix));
+				}
+				
 			}
 			//my_prim->material;
 			//my_prim->type;
 			applyMaterial(my_prim->material);
-			
 			renderShape(my_prim->type);
-			cout << "drawing " << counter << endl;
-			counter++;
+			glPopMatrix();
 		}
 		glPopMatrix();
 	}
@@ -282,29 +291,27 @@ void MyGLCanvas::drawScene() {
 }
 
 // a ma
-void MyGLCanvas::traverse1(SceneNode* root, list<ScenePrimitive*> primitives, list<SceneTransformation*> scenetransformations, map<ScenePrimitive*, vector<SceneTransformation*>>& my_scene_vals)
+void MyGLCanvas::traverse1(SceneNode* root, list<ScenePrimitive*>& primitives, vector<SceneTransformation*>& scenetransformations, vector<pair<ScenePrimitive*, vector<SceneTransformation*>>>& my_scene_vals)
 {
 	if (root == nullptr)
 		return;
 
 	for (SceneNode* node : root->children) {
-		traverse1(node, primitives, scenetransformations, my_scene_vals);
-		for (ScenePrimitive* my_prim : node->primitives) {
-			auto it = my_scene_vals.find(my_prim);
-			if (it == my_scene_vals.end()) {
-				my_scene_vals.insert(pair<ScenePrimitive*, vector<SceneTransformation*>>(my_prim, node->transformations));
-			}
-			else {
-				for (SceneTransformation* my_tranform : node->transformations) {
-					cout << my_tranform->scale[0] << my_tranform->scale[1] << my_tranform->scale[2] << endl;
-				}
-			}
-			primitives.push_back(my_prim);
-		}
-		for (SceneTransformation* my_transform : node->transformations) {
-			scenetransformations.push_back(my_transform);
+		for (SceneTransformation* my_trans : node->transformations) {
+			scenetransformations.push_back(my_trans);
 		}
 		
+		traverse1(node, primitives, scenetransformations, my_scene_vals);
+		
+		for (ScenePrimitive* my_prim : node->primitives) { // hit leaf node
+			list<SceneTransformation*> curr_scene_trans = {};
+			my_scene_vals.push_back(pair<ScenePrimitive*, vector<SceneTransformation*>>(my_prim, scenetransformations));
+			primitives.push_back(my_prim);
+		}
+		
+		for (SceneTransformation* my_trans : node->transformations) {
+			scenetransformations.pop_back();
+		}
 	}
 }
 

@@ -56,7 +56,7 @@ private:
 	void drawScene();
 	void drawObject(OBJ_TYPE type);
 	void drawAxis();
-	void traverse1(SceneNode* root, list<ScenePrimitive*> primitives, list<SceneTransformation*> scenetransformations, map<ScenePrimitive*, vector<SceneTransformation*>>& my_scene_vals);
+	void traverse1(SceneNode* root, list<ScenePrimitive*>& primitives, vector<SceneTransformation*>& scenetransformations, vector<pair<ScenePrimitive*, vector<SceneTransformation*>>>& my_scene_vals);
 	int handle(int);
 	void resize(int x, int y, int w, int h);
 	void updateCamera(int width, int height);
