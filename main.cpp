@@ -201,6 +201,10 @@ private:
 		win->canvas->camera->setNearPlane(nearVal);
 		win->canvas->camera->setFarPlane(farVal);
 		win->canvas->camera->setViewAngle(angle);
+		float lookX = win->lookXSlider->value();
+		float lookY = win->lookYSlider->value();
+		float lookZ = win->lookZSlider->value();
+		win->canvas->camera->orientLookVec(win->canvas->camera->getEyePoint(), glm::vec3(lookX, lookY, lookZ), win->canvas->camera->getUpVector());
 	}
 };
 

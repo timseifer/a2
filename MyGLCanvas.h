@@ -17,6 +17,7 @@
 #include "Cylinder.h"
 #include "Cone.h"
 #include "Sphere.h"
+#include "Pyramid.h"
 
 #include "Camera.h"
 #include "scene/SceneParser.h"
@@ -38,6 +39,7 @@ public:
 	Cylinder* cylinder;
 	Cone* cone;
 	Sphere* sphere;
+	Pyramid* pyramid;
 	Shape* shape;
 
 	Camera* camera;

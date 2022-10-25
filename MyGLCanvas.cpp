@@ -16,7 +16,9 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window
 	cylinder = new Cylinder();
 	cone = new Cone();
 	sphere = new Sphere();
+	pyramid = new Pyramid();
 	shape = cube;
+
 
 	resetScene();
 }
@@ -79,7 +81,7 @@ void MyGLCanvas::renderShape(OBJ_TYPE type) {
 		shape = sphere;
 		break;
 	case SHAPE_SPECIAL1:
-		shape = cube;
+		shape = pyramid;
 		break;
 	default:
 		shape = cube;
@@ -237,7 +239,33 @@ void MyGLCanvas::drawScene() {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//TODO: draw wireframe of the scene
-		// note that you don't need to applyMaterial, just draw the geometry
+			glPushMatrix();
+
+		for (pair<ScenePrimitive*, vector<SceneTransformation*>> my_p : my_scene_vals) {
+			ScenePrimitive* my_prim  = my_p.first;
+			glPushMatrix();
+			// TRANSFORMATION_TRANSLATE, TRANSFORMATION_SCALE,
+			// 	TRANSFORMATION_ROTATE, TRANSFORMATION_MATRIX
+			for (SceneTransformation* transform : my_p.second) {
+
+				if (transform->type == TRANSFORMATION_TRANSLATE) {
+					glTranslatef(transform->translate[0], transform->translate[1], transform->translate[2]);
+				}
+				else if (transform->type == TRANSFORMATION_SCALE) {
+					glScalef(transform->scale[0], transform->scale[1], transform->scale[2]);
+				}
+				else if (transform->type == TRANSFORMATION_ROTATE) {
+					glRotatef(glm::degrees(transform->angle),transform->rotate[0], transform->rotate[1], transform->rotate[2]);
+				}
+				else if (transform->type == TRANSFORMATION_MATRIX) {
+					glLoadMatrixf(glm::value_ptr(transform->matrix));
+				}
+				
+			}
+			renderShape(my_prim->type);
+			glPopMatrix();
+		}
+		glPopMatrix();
 		glEnable(GL_LIGHTING);
 	}
 

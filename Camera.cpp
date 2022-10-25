@@ -146,10 +146,7 @@ void Camera::calculate_matrices() {
 		0, 0,  c / (c + 1.0f), 0
 	};
 	this->model_view_matrix = multiply_matrix(this->translate_inverse, this->rotate_inverse);
-	//glm::mat4 correct_matrix_model = glm::lookAt(this->eye, this->lookVec, this->upVec);
-	//this->model_view_matrix = correct_matrix_model;
 	this->projection_matrix = multiply_matrix(this->scale, this->m_pp);
-	//glm::mat4 correct_projection_model = glm::perspective(glm::radians(this->viewAngle), this->getScreenWidthRatio(), this->nearPlane, this->farPlane);
 	float end = 0;
 }
 
@@ -235,7 +232,7 @@ glm::mat4 Camera::getModelViewMatrix() {
 
 
 void Camera::rotateV(float degrees) {
-	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), -glm::radians(degrees), glm::vec3(0, 1, 0));
+	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), -glm::radians(degrees), this->v);
 	this->u = mymatrix * glm::vec4(this->u, 1);
 	this->v = mymatrix * glm::vec4(this->v, 1);
 	this->w = mymatrix * glm::vec4(this->w, 1);
@@ -244,7 +241,7 @@ void Camera::rotateV(float degrees) {
 }
 
 void Camera::rotateU(float degrees) {
-	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), glm::radians(degrees), glm::vec3(0, 0, 1));
+	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), glm::radians(degrees), this->u);
 	this->u = mymatrix * glm::vec4(this->u, 1);
 	this->v = mymatrix * glm::vec4(this->v, 1);
 	this->w = mymatrix * glm::vec4(this->w, 1);
@@ -254,7 +251,7 @@ void Camera::rotateU(float degrees) {
 }
 
 void Camera::rotateW(float degrees) {
-	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), -glm::radians(degrees), glm::vec3(1, 0, 0));
+	glm::mat4 mymatrix = glm::rotate(glm::mat4(1.0), -glm::radians(degrees), this->w);
 	this->u = mymatrix * glm::vec4(this->u, 1);
 	this->v = mymatrix * glm::vec4(this->v, 1);
 	this->w = mymatrix * glm::vec4(this->w, 1);
